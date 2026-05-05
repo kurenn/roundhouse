@@ -128,6 +128,23 @@ If you're currently using the [claude-on-rails](https://github.com/kurenn/claude
 
 The two are functionally similar in coverage but architecturally different — roundhouse uses Claude Code's native Agent tool and skills primitives, where v0.4 spawns separate Claude Code processes coordinated over MCP. The bench shows the practical cost difference.
 
+## Companion plugins (same marketplace)
+
+Roundhouse pairs naturally with three other plugins in the [kurenn marketplace](https://github.com/kurenn/marketplace):
+
+| Plugin | What it adds | Best invoked |
+|---|---|---|
+| **`prompt-refiner@kurenn`** | One-shot task refinement — translates casual asks into structured specs | Roundhouse already calls `/prompt-refiner` once per task. Install it so the call resolves. |
+| **`boorails@kurenn`** | 7 deep Rails skills: `/boo-security`, `/boo-quality`, `/boo-safety`, `/boo-diagnose`, `/boo-framework`, `/boo-alternatives`, `/boo-dx` | Use after roundhouse ships a feature, for deeper audit/critique cycles |
+| **`rails-audit@kurenn`** | Full Rails project stability audit across 18 dimensions, severity-ranked report | Use periodically (pre-launch, quarterly) to catch drift roundhouse won't see during feature work |
+
+Install the full toolkit with:
+
+```bash
+claude plugin marketplace add kurenn/marketplace
+claude plugin install roundhouse@kurenn boorails@kurenn rails-audit@kurenn prompt-refiner@kurenn
+```
+
 ## Compatibility
 
 - Claude Code 2.69+ (uses `--plugin-dir`, `claude plugin validate`)
