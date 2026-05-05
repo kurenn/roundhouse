@@ -8,21 +8,16 @@ on:
   workflow_dispatch:
 
 jobs:
-  plugin-validate:
+  structure:
+    name: Plugin structure
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+      - name: Validate plugin manifest, hooks, agent and skill frontmatter
+        run: python3 scripts/validate.py
 
-      - name: Install Claude Code CLI
-        run: |
-          curl -fsSL https://claude.ai/install.sh | sh
-          echo "$HOME/.local/bin" >> "$GITHUB_PATH"
-
-      - name: Validate plugin manifest
-        run: claude plugin validate "$GITHUB_WORKSPACE"
-
-  hooks-shellcheck:
+  shellcheck:
+    name: Hook scripts
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
