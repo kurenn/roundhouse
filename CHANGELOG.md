@@ -5,6 +5,17 @@ All notable changes to roundhouse are documented here.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.1] — 2026-05-05
+
+### Fixed
+
+- Plugin failed to load when installed via marketplace with the error
+  "Duplicate hooks file detected: ./hooks/hooks.json resolves to already-loaded
+  file." Claude Code auto-loads `hooks/hooks.json` by convention, so the explicit
+  `"hooks"` field in `plugin.json` was redundant — `--plugin-dir` accepted the
+  duplicate, but marketplace install rejected it. Removed the field.
+- Surfaced during smoke-testing the `kurenn/marketplace` install path.
+
 ## [1.0.0] — 2026-05-05
 
 First production release. Bench-validated against
