@@ -36,17 +36,27 @@ See [BENCHMARK.md](BENCHMARK.md) for the full evidence.
 
 ## Install
 
-### Local plugin (no marketplace required)
+### Recommended — via the kurenn marketplace
+
+```bash
+claude plugin marketplace add kurenn/marketplace   # one-time per user
+claude plugin install roundhouse@kurenn            # one-time install
+```
+
+Restart your Claude Code session after install and the `/rails-feature`, `/rails-bugfix`, and specialist-mode skills appear in the slash menu.
+
+Pull updates later with:
+
+```bash
+claude plugin marketplace update kurenn
+claude plugin update roundhouse
+```
+
+### Local plugin dir (development / contributing)
 
 ```bash
 git clone https://github.com/kurenn/roundhouse ~/workspace/roundhouse
 claude --plugin-dir ~/workspace/roundhouse
-```
-
-### Marketplace (when available)
-
-```bash
-claude plugin install roundhouse@kurenn
 ```
 
 ## Usage
