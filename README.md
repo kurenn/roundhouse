@@ -45,18 +45,38 @@ claude plugin install roundhouse@kurenn            # one-time install
 
 Restart your Claude Code session after install and the `/rails-feature`, `/rails-bugfix`, and specialist-mode skills appear in the slash menu.
 
-Pull updates later with:
-
-```bash
-claude plugin marketplace update kurenn
-claude plugin update roundhouse
-```
-
 ### Local plugin dir (development / contributing)
 
 ```bash
 git clone https://github.com/kurenn/roundhouse ~/workspace/roundhouse
 claude --plugin-dir ~/workspace/roundhouse
+```
+
+## Updating
+
+When a new version is released, pull it via the marketplace:
+
+```bash
+# Refresh the marketplace cache (picks up new versions from marketplace.json)
+claude plugin marketplace update kurenn
+
+# Update roundhouse to the latest released version
+claude plugin update roundhouse
+```
+
+Restart your Claude Code session after updating so the slash menu picks up the new version.
+
+Verify which version you're on:
+
+```bash
+claude plugin list | grep -A3 roundhouse@kurenn
+```
+
+To pin to a specific older version (e.g. for rollback while debugging a regression), clone the tag locally and load via `--plugin-dir`:
+
+```bash
+git clone https://github.com/kurenn/roundhouse --branch v1.0.1 ~/workspace/roundhouse-1.0.1
+claude --plugin-dir ~/workspace/roundhouse-1.0.1
 ```
 
 ## Usage
