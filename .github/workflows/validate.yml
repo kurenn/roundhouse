@@ -25,3 +25,11 @@ jobs:
         run: sudo apt-get update && sudo apt-get install -y shellcheck
       - name: Lint hook scripts
         run: shellcheck hooks/*.sh
+
+  hook-behavior:
+    name: Hook behavior
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Smoke-test hooks against a simulated PostToolUse payload
+        run: bash scripts/hook_smoke.sh hooks

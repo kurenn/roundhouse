@@ -157,12 +157,38 @@ def check_hook_scripts_executable() -> None:
             err(f"{path}: shell script is not executable (chmod +x)")
 
 
+def check_hook_scripts_read_payload() -> None:
+    """Guard against the CLAUDE_FILE regression.
+
+    Claude Code delivers the PostToolUse payload as JSON on stdin — there is no
+    CLAUDE_FILE env var. A hook that derives the edited path from $CLAUDE_FILE
+    silently no-ops. Any hook that needs the edited file must instead read stdin
+    (cat) and parse .tool_input.file_path.
+    """
+    hooks_dir = ROOT / "hooks"
+    if not hooks_dir.is_dir():
+        return
+    var_re = re.compile(r"\$\{?CLAUDE_FILE\b")
+    for path in sorted(hooks_dir.glob("*.sh")):
+        text = path.read_text()
+        # Only count code, not comments — the fix documents the trap in a comment.
+        code = "\n".join(l for l in text.splitlines() if not l.lstrip().startswith("#"))
+        if var_re.search(code):
+            err(f"{path}: expands $CLAUDE_FILE — Claude Code never sets it; "
+                f"read the payload from stdin and parse .tool_input.file_path")
+        # If a hook resolves the edited file path, it must read stdin to get it.
+        if "file_path" in code and "cat" not in code:
+            err(f"{path}: extracts file_path but never reads stdin (cat) — "
+                f"the PostToolUse payload arrives on stdin")
+
+
 def main() -> int:
     check_plugin_manifest()
     check_hooks_json()
     check_agents()
     check_skills()
     check_hook_scripts_executable()
+    check_hook_scripts_read_payload()
     if errors:
         print(f"✘ {len(errors)} validation error(s):", file=sys.stderr)
         for e in errors:
