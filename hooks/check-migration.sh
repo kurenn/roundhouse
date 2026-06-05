@@ -5,7 +5,11 @@
 
 set -u
 
-file="${CLAUDE_FILE:-}"
+# Claude Code delivers the PostToolUse payload as JSON on stdin; the edited
+# path lives at .tool_input.file_path. (There is no CLAUDE_FILE env var.)
+input="$(cat)"
+file="$(printf '%s' "$input" | jq -r '.tool_input.file_path // empty' 2>/dev/null)"
+[ -z "$file" ] && file="$(printf '%s' "$input" | sed -n 's/.*"file_path"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p' | head -1)"
 [ -z "$file" ] && exit 0
 [ -f "$file" ] || exit 0
 
