@@ -29,7 +29,7 @@ fi
 # Run rubocop on the single file. Print only error/warning lines, keep it short.
 cd "$project_root" 2>/dev/null || exit 0
 
-output="$(BUNDLE_WITHOUT=development bundle exec rubocop --no-color --format simple "$file" 2>&1 || true)"
+output="$(bundle exec rubocop --no-color --format simple "$file" 2>&1 || true)"
 
 # If clean (no offenses), don't print anything — silence is golden.
 if echo "$output" | grep -qE "no offenses detected|0 offenses"; then
