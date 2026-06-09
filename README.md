@@ -139,6 +139,8 @@ roundhouse/
 - **Slim subagent prompts** (~50 lines) with **lazy-loaded reference docs**. Every specialist loads cheaply; tutorial depth is read on demand only.
 - **Hooks for deterministic gates.** TDD reminder, migration safety, Rubocop lint — implemented as zero-token shell scripts that fire on every Edit/Write.
 
+For deliberate *non*-features — why there's no `/rails-security` skill, why the benchmark isn't re-run on every model bump — see [DECISIONS.md](DECISIONS.md).
+
 ## Migration from claude-on-rails v0.4
 
 If you're currently using the [claude-on-rails](https://github.com/kurenn/claude-on-rails) Ruby gem (v0.4.x) which provides a `claude-swarm`-based Rails team:

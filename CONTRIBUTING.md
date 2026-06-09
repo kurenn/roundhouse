@@ -27,9 +27,16 @@ claude plugin validate /path/to/roundhouse
 
 1. Create `agents/rails-<name>.md` following the existing template (rails-models is a good example to copy)
 2. Add at least one reference doc in `refs/` if the domain has tutorial-depth content
-3. Add a specialist-mode skill in `skills/rails-<name>/SKILL.md` that points at the agent
+3. Add a specialist-mode skill in `skills/rails-<name>/SKILL.md` that points at the agent — **unless the agent is a review gate** (like `rails-database` / `rails-security`), which stay agent-only on purpose. See [DECISIONS.md](DECISIONS.md) (D1) before adding a skill for a gate.
 4. Update the orchestrator skill (`skills/rails-feature/SKILL.md`) only if dispatch logic needs to reference the new agent (usually it doesn't — the orchestrator picks dynamically based on the task)
-5. Update the README's specialist list
+5. Update the README's specialist list (and link any new `refs/` docs from the agent — orphaned refs never get loaded)
+
+## Design decisions
+
+Some choices that look like gaps are deliberate (e.g. why there's no
+`/rails-security` skill, why the benchmark isn't re-run on every model bump).
+Before "fixing" one, check [DECISIONS.md](DECISIONS.md) — each entry lists the
+trigger that would actually justify revisiting it.
 
 ## Reporting bugs
 

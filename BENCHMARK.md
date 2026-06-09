@@ -195,6 +195,15 @@ The bench harness lives at [claude-on-rails-bench](https://github.com/kurenn/cla
 
 Per-run JSON results include cost, tokens (input/output/cache_read/cache_create), per-instance cost breakdown for swarm runs, the actual file diff, and the automated check outcomes. Worktrees are kept on disk after each run so the actual agent output is inspectable.
 
+### When to re-run
+
+These numbers are a dated 1.0.0 snapshot (orchestrator on `claude-opus-4-7`).
+Don't re-run just because the model id has advanced — the cost thesis is
+architectural, not model-bound. Re-run only when the orchestration architecture
+changes materially, a new competitor version ships, or the numbers are publicly
+disputed. See [DECISIONS.md](DECISIONS.md) (D2) for the full rationale, and
+update this document's header (not just the figures) when you do.
+
 ## Verdict
 
 Plugin wins on every axis on every task that both systems completed. Cost ratio range: **6.9× to 33.6×**. Plugin completes 10/10 tasks; swarm completes 9/10 with one catastrophic incomplete on the heaviest cross-cutting refactor.
