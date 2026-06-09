@@ -5,6 +5,38 @@ All notable changes to roundhouse are documented here.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.0] — 2026-06-08
+
+### Added
+
+- **`/rails-jobs` and `/rails-tailwind` specialist-mode skills.** Both shipped as
+  agents in 1.0.0 but had no user-facing skill, unlike models / controllers /
+  views / services / tests — so they couldn't be invoked directly. All seven
+  specialists are now reachable from the slash menu. (`rails-database` and
+  `rails-security` remain agent-only — they're orchestrator-invoked gates.)
+
+### Fixed
+
+- **Orphaned reference docs.** `refs/controllers-restful.md` and
+  `refs/strong-params.md` both declared "Lazy-loaded by `rails-controllers`" in
+  their own headers, but no agent or skill linked them — the model was never
+  pointed at them, including the strong-params / mass-assignment guidance. Now
+  linked from the `rails-controllers` agent's reference section.
+- **Unreferenced examples.** `examples/{trivial,single-domain,cross-cutting}.md`
+  existed but nothing pointed to them. The `/rails-feature` triage step now
+  references them for tier-boundary cases.
+
+### Changed
+
+- **TDD reminder hook widened.** `check-tdd.sh` now also fires for
+  `app/channels`, `app/helpers`, and `lib/` Ruby — previously only
+  models / controllers / services / jobs / mailers.
+- **Model references refreshed to `claude-opus-4-8`.** `scripts/validate.py`'s
+  allowlist accepts the current Opus (alongside the prior `4-7`), and
+  `CONTRIBUTING.md` points orchestrator-style agents at it. Historical
+  references in `BENCHMARK.md` and the 1.0.0 entry are left as-is — they record
+  what was actually used at the time.
+
 ## [1.0.2] — 2026-06-08
 
 ### Fixed
