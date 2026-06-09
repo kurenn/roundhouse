@@ -1,6 +1,6 @@
 {
   "name": "roundhouse",
-  "version": "1.0.2",
+  "version": "1.1.0",
   "description": "Rails specialist team for Claude Code. Orchestrator on Opus, specialists on Sonnet, prompt-refiner once per task, TDD by default for cross-cutting work. Triages task complexity to avoid over-spawning specialists on trivial work.",
   "author": {
     "name": "Abraham Kuri",
