@@ -49,8 +49,11 @@ When it returns, run the failing specs and confirm they fail for the right reaso
 
 Dispatch implementation specialists. Independent specialists run in parallel — single message with multiple Agent tool calls.
 
+Available specialists: `rails-models`, `rails-controllers`, `rails-services`, `rails-views`, `rails-jobs`, `rails-tailwind`, `rails-tests`. Spawn `rails-jobs` whenever the feature enqueues async work (mailers via `deliver_later`, background processing, scheduled work); spawn `rails-tailwind` for styling/markup-class work on the views.
+
 - Sequential dependencies: models/migration → controllers → services → views
-- Independent (parallel): tests + views once models exist; tailwind alongside stimulus
+- Async work: spawn `rails-jobs` once the model/service that enqueues it exists; it can run in parallel with views
+- Independent (parallel): tests + views once models exist; `rails-tailwind` alongside `rails-views`
 - Each Agent call passes `model: "sonnet"` explicitly
 - Each specialist gets only its section of the plan, plus the path to the failing tests it must make pass
 
