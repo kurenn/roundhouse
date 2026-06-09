@@ -13,9 +13,9 @@ file="$(printf '%s' "$input" | jq -r '.tool_input.file_path // empty' 2>/dev/nul
 [ -z "$file" ] && file="$(printf '%s' "$input" | sed -n 's/.*"file_path"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p' | head -1)"
 [ -z "$file" ] && exit 0
 
-# Only fire for production Ruby code under app/.
+# Only fire for production Ruby code under app/ (and lib/).
 case "$file" in
-  */app/models/*.rb|*/app/controllers/*.rb|*/app/services/*.rb|*/app/jobs/*.rb|*/app/mailers/*.rb) ;;
+  */app/models/*.rb|*/app/controllers/*.rb|*/app/services/*.rb|*/app/jobs/*.rb|*/app/mailers/*.rb|*/app/channels/*.rb|*/app/helpers/*.rb|*/lib/*.rb) ;;
   *) exit 0 ;;
 esac
 

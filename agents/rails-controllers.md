@@ -35,6 +35,8 @@ Controllers are thin coordinators — receive request → delegate to model or s
 
 ## Reference (load on demand only)
 
+- `${CLAUDE_PLUGIN_ROOT}/refs/controllers-restful.md` — RESTful action shape, nesting, member/collection routes
+- `${CLAUDE_PLUGIN_ROOT}/refs/strong-params.md` — when the permitted-parameter shape is non-trivial (nested attributes, arrays, conditional permits)
 - `${CLAUDE_PLUGIN_ROOT}/refs/activerecord-patterns.md` — only if your work involves model loading patterns
 
 ## Output contract
