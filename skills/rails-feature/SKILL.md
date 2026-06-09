@@ -28,6 +28,8 @@ Pick the smallest tier that fits the refined task. Over-spawning specialists is 
 
 State the tier you picked in one line before continuing.
 
+For a worked example of each tier — prompt, expected triage, and how the workflow plays out — see `${CLAUDE_PLUGIN_ROOT}/examples/{trivial,single-domain,cross-cutting}.md`. Consult them if a task sits on a tier boundary.
+
 ## Step 3: Plan (cross-cutting only)
 
 Write a short task brief in the conversation (no need to write to disk for the pilot):
