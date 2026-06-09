@@ -5,6 +5,38 @@ All notable changes to roundhouse are documented here.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.2] — 2026-06-08
+
+### Fixed
+
+- **The deterministic hooks never ran.** All three hooks read the edited file
+  path from `$CLAUDE_FILE`, an environment variable Claude Code does not set —
+  so every hook hit its empty-path guard and exited silently. The advertised
+  TDD reminder, migration-safety check, and Rubocop-on-edit gates were inert in
+  every install. Hooks now parse the PostToolUse payload Claude Code actually
+  delivers on stdin (`.tool_input.file_path`, with a `sed` fallback when `jq`
+  is absent). A silent no-op is indistinguishable from success at a glance, so
+  this shipped undetected since 1.0.0.
+- **Lint hook excluded Rubocop's own bundle group.** `lint-changed.sh` ran
+  `BUNDLE_WITHOUT=development bundle exec rubocop`, but Rubocop conventionally
+  lives in the `:development` group — so even once the hook fired it failed to
+  resolve the gem in the standard Rails layout. Removed the exclusion.
+
+### Added
+
+- **`rails-jobs` and `rails-tailwind` are now reachable.** Both specialists
+  shipped in 1.0.0 but the `/rails-feature` orchestrator's implementation step
+  never listed them in its dispatch logic, so the planner had no instruction to
+  spawn them. Step 5 now enumerates the full roster with explicit spawn triggers
+  (async work via `deliver_later`/background processing → `rails-jobs`;
+  styling/markup-class work → `rails-tailwind`) and parallelism guidance.
+- **Regression guards for the hook payload contract.** `scripts/hook_smoke.sh`
+  builds a throwaway Rails-shaped repo, pipes a real PostToolUse payload into
+  each hook, and asserts the reminders actually fire — now wired into CI as a
+  "Hook behavior" job. `scripts/validate.py` gained a static guard that fails
+  any hook expanding `$CLAUDE_FILE` or extracting `file_path` without reading
+  stdin. Before/after the fix: `1 passed / 2 failed` → `3 passed / 0 failed`.
+
 ## [1.0.1] — 2026-05-05
 
 ### Fixed
