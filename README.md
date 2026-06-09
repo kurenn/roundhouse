@@ -100,6 +100,8 @@ When the task is clearly scoped to one Rails layer and you want to skip orchestr
 - `/rails-views` — ERB, partials, ViewComponent, Hotwire
 - `/rails-services` — service objects, business logic
 - `/rails-tests` — RSpec specs, factories, coverage
+- `/rails-jobs` — ActiveJob, async work, queues, retries, idempotency
+- `/rails-tailwind` — Tailwind utility classes, responsive design in ERB
 
 ### Bug fixes — `/rails-bugfix`
 
@@ -112,7 +114,7 @@ roundhouse/
 ├── skills/
 │   ├── rails-feature/         orchestrator (team mode)
 │   ├── rails-bugfix/          root-cause workflow
-│   └── rails-{models,controllers,views,services,tests}/   specialist-mode entrypoints
+│   └── rails-{models,controllers,views,services,tests,jobs,tailwind}/   specialist-mode entrypoints
 ├── agents/                    9 Sonnet specialists with slim prompts (~50 lines each)
 │   ├── rails-models, rails-controllers, rails-views
 │   ├── rails-services, rails-jobs, rails-tests
