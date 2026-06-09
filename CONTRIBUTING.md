@@ -20,7 +20,7 @@ claude plugin validate /path/to/roundhouse
 ## Frontmatter gotchas
 
 - Descriptions with colons MUST be double-quoted: `description: "Foo: bar"` (otherwise YAML drops all frontmatter silently)
-- Subagent `model` is `claude-sonnet-4-6` for specialists, `claude-opus-4-7` for orchestrator-style agents
+- Subagent `model` is `claude-sonnet-4-6` for specialists, `claude-opus-4-8` for orchestrator-style agents
 - Hooks JSON nests `hooks: [{type, command}]` arrays under each matcher entry — don't use a flat `command` field
 
 ## Adding a new specialist
