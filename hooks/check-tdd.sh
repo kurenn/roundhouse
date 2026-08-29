@@ -2,9 +2,24 @@
 # TDD discipline reminder.
 # Fires after every Edit/Write. Filters to production code under app/ internally.
 # Prints a one-line nudge if no spec/test file has been touched in the working tree.
-# Stateless, zero token cost — Claude reads stdout on its next turn.
+# Stateless. Emits hookSpecificOutput.additionalContext so Claude actually sees it.
 
 set -u
+
+# Deliver a message to Claude.
+# PostToolUse stdout at exit 0 goes to the debug log only — Claude never sees it.
+# hookSpecificOutput.additionalContext is the documented channel that reaches the
+# transcript. Without jq, fall back to exit 2, which shows stderr to Claude.
+emit() {
+  if command -v jq >/dev/null 2>&1; then
+    # shellcheck disable=SC2016
+    jq -nc --arg t "$1" \
+      '{hookSpecificOutput:{hookEventName:"PostToolUse",additionalContext:$t}}'
+    exit 0
+  fi
+  printf '%s\n' "$1" >&2
+  exit 2
+}
 
 # Claude Code delivers the PostToolUse payload as JSON on stdin; the edited
 # path lives at .tool_input.file_path. (There is no CLAUDE_FILE env var.)
@@ -35,6 +50,4 @@ if git status --porcelain spec/ test/ 2>/dev/null | grep -qE '_spec\.rb|_test\.r
   exit 0
 fi
 
-echo "TDD reminder: production code under app/ was just edited but no spec/test file has changed in the working tree. If this task has user-visible behavior, write or update the spec before/alongside the production change."
-
-exit 0
+emit "TDD reminder: production code under app/ was just edited but no spec/test file has changed in the working tree. If this task has user-visible behavior, write or update the spec before/alongside the production change."

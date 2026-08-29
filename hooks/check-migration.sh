@@ -1,9 +1,24 @@
 #!/usr/bin/env bash
 # Migration safety check.
 # Fires after every Edit/Write. Filters to db/migrate/*.rb internally.
-# Surfaces common production-risky migration patterns. Stateless, zero token cost.
+# Surfaces common production-risky migration patterns. Stateless.
 
 set -u
+
+# Deliver a message to Claude.
+# PostToolUse stdout at exit 0 goes to the debug log only — Claude never sees it.
+# hookSpecificOutput.additionalContext is the documented channel that reaches the
+# transcript. Without jq, fall back to exit 2, which shows stderr to Claude.
+emit() {
+  if command -v jq >/dev/null 2>&1; then
+    # shellcheck disable=SC2016
+    jq -nc --arg t "$1" \
+      '{hookSpecificOutput:{hookEventName:"PostToolUse",additionalContext:$t}}'
+    exit 0
+  fi
+  printf '%s\n' "$1" >&2
+  exit 2
+}
 
 # Claude Code delivers the PostToolUse payload as JSON on stdin; the edited
 # path lives at .tool_input.file_path. (There is no CLAUDE_FILE env var.)
@@ -42,8 +57,12 @@ if grep -qE "null:\s*false" "$file" && ! grep -qE "default:" "$file" && grep -q 
 fi
 
 if [ ${#warnings[@]} -gt 0 ]; then
-  printf "Migration safety reminders:\n"
-  printf "  - %s\n" "${warnings[@]}"
+  msg="Migration safety reminders:"
+  for w in "${warnings[@]}"; do
+    msg="$msg
+  - $w"
+  done
+  emit "$msg"
 fi
 
 exit 0

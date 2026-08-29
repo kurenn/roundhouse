@@ -7,7 +7,7 @@ Thanks for your interest. The plugin is a thin layer over Claude Code primitives
 - `skills/` — slash-command entrypoints. Each skill is a `SKILL.md` with frontmatter (`name`, `description`) and a workflow body. Keep them under ~100 lines; specialist-mode skills should be near-trivial pointers to the corresponding subagent.
 - `agents/` — subagent definitions, one Markdown file per agent. Frontmatter is required: `name`, `description` (quoted if it contains a colon), `tools`, `model`. Keep prompts to ~50 lines of non-negotiables + workflow + output contract. Push depth to `refs/`.
 - `refs/` — reference content loaded by agents on demand only. These can be longer (100–300 lines). Each one focuses on a single domain (e.g. `safe-migrations.md`, `n-plus-one.md`).
-- `hooks/` — bash scripts run on `PostToolUse`. Keep them stateless, exit-zero unless there's actionable output, filter to the relevant file types internally (no `filePatterns` field — `claude plugin validate` rejects it).
+- `hooks/` — bash scripts run on `PostToolUse`. Keep them stateless, exit-zero, filter to the relevant file types internally (no `filePatterns` field — `claude plugin validate` rejects it). **Bare stdout is invisible to Claude** — PostToolUse stdout at exit 0 goes to the debug log only. Anything Claude must act on has to be emitted as `hookSpecificOutput.additionalContext` JSON; copy the `emit()` helper from any existing hook rather than calling `echo`.
 
 ## Validation
 
