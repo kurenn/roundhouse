@@ -13,6 +13,10 @@ Before doing anything else, run the user's request through the `/prompt-refiner`
 
 Do not invoke `/prompt-refiner` again later in the workflow. One refinement, at the top.
 
+`/prompt-refiner` ships as a separate plugin (`prompt-refiner@kurenn`). If it isn't
+installed, don't stall and don't hunt for it — restate the task yourself in three
+bullets (goal / layers affected / acceptance criteria) and continue from there.
+
 ## Step 2: Triage (mandatory)
 
 Pick the smallest tier that fits the refined task. Over-spawning specialists is the most common failure mode.
@@ -56,7 +60,7 @@ Available specialists: `rails-models`, `rails-controllers`, `rails-services`, `r
 - Sequential dependencies: models/migration → controllers → services → views
 - Async work: spawn `rails-jobs` once the model/service that enqueues it exists; it can run in parallel with views
 - Independent (parallel): tests + views once models exist; `rails-tailwind` alongside `rails-views`
-- Each Agent call passes `model: "sonnet"` explicitly
+- Specialists carry their own model in frontmatter — don't override it per call
 - Each specialist gets only its section of the plan, plus the path to the failing tests it must make pass
 
 ## Step 6: Verify green

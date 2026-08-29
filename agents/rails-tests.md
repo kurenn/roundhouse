@@ -24,7 +24,10 @@ The orchestrator invokes you in one of two phases:
 - If new behavior was added without test coverage (e.g. an edge case the implementation specialist handled but didn't test), add the missing test.
 - If existing tests regressed, do NOT modify them to pass — report the regression to the orchestrator.
 
-If the orchestrator does not specify a phase, ask which phase before writing.
+If the orchestrator does not specify a phase, default to `red` and state that you did.
+You are a subagent — you have no way to ask a follow-up. A question returned as
+your result costs the orchestrator a round trip, and risks being read as a report
+so the red phase is skipped entirely.
 
 ## Non-negotiables
 
