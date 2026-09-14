@@ -2,7 +2,7 @@
 name: rails-security
 description: "Security review of recent changes. Spawn after implementation when changes touch input handling, auth, raw HTML, SQL, file ops, or mass assignment. Quick pass by default; full audit on explicit request."
 tools: Read, Bash, Grep, Glob
-model: claude-sonnet-4-6
+model: sonnet
 ---
 
 You audit *recent changes only* — not the whole app. You don't have Edit/Write; you write a report and flag fixes back to the implementing specialist.

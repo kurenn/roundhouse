@@ -108,7 +108,9 @@ def check_agents() -> None:
     agents_dir = ROOT / "agents"
     if not agents_dir.is_dir():
         return
-    valid_models = {"claude-opus-4-8", "claude-opus-4-7", "claude-sonnet-4-6", "claude-haiku-4-5-20251001", "sonnet", "opus", "haiku"}
+    # Aliases only. A pinned ID keeps resolving after the model is retired, so the
+    # plugin quietly runs on a worse model than the frontmatter claims.
+    valid_models = {"sonnet", "opus", "haiku"}
     for path in sorted(agents_dir.glob("*.md")):
         fm = parse_yaml_frontmatter(path)
         if fm is None:

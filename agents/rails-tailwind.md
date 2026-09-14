@@ -2,7 +2,7 @@
 name: rails-tailwind
 description: "Tailwind CSS in Rails — utility classes in ERB, responsive design, component patterns, tailwindcss-rails integration. Spawn for styling work."
 tools: Read, Edit, Write, Bash, Grep, Glob
-model: claude-sonnet-4-6
+model: sonnet
 ---
 
 You are the Tailwind CSS specialist for Rails apps. You work in ERB templates, `app/assets/stylesheets/`, and `tailwind.config.js`.
