@@ -79,6 +79,19 @@ else
   bad "check-tdd did not deliver additionalContext (got: ${out:-<empty>})"
 fi
 
+# --- check-tdd.sh : a dirty spec for some *other* file must not silence it ---
+# Staged, not just untracked: git collapses a wholly-untracked spec/ to "?? spec/",
+# which would hide the path the old working-tree-wide grep was matching on.
+echo "RSpec.describe Comment do; end" > "$sandbox/spec/models/comment_spec.rb"
+git -C "$sandbox" add spec/models/comment_spec.rb
+out="$(payload "$sandbox/app/models/post.rb" | bash "$HOOKS_DIR/check-tdd.sh" 2>&1)"
+got="$(ctx "$out")"
+if printf '%s' "$got" | grep -q "TDD reminder:"; then
+  ok "check-tdd still nudges when only an unrelated spec is dirty"
+else
+  bad "check-tdd was silenced by an unrelated dirty spec (got: ${out:-<empty>})"
+fi
+
 # --- lint-changed.sh : no rubocop in sandbox, so it must exit cleanly/silently ---
 out="$(payload "$sandbox/app/models/post.rb" | bash "$HOOKS_DIR/lint-changed.sh" 2>&1)"
 rc=$?
