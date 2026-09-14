@@ -1,6 +1,6 @@
 # Roundhouse
 
-A Claude Code plugin that simulates a Rails development team. Orchestrator on Opus, specialists on Sonnet, prompt-refiner once per task, TDD by default for cross-cutting work, conditional security/database gates.
+A Claude Code plugin that simulates a Rails development team. Specialists pinned to Sonnet, Opus recommended for the orchestrating session, prompt-refiner once per task, TDD by default for cross-cutting work, conditional security/database gates.
 
 The orchestrator triages each task into one of three tiers (trivial / single-domain / cross-cutting) and dispatches only the specialists actually needed. Trivial work bypasses the team entirely; cross-cutting work runs tests-first and applies gates only when the change touches their concerns.
 
@@ -8,7 +8,7 @@ The orchestrator triages each task into one of three tiers (trivial / single-dom
 
 ## Why this exists
 
-Rails AI-coding tools that fan out specialists for every change waste 60–80% of their cost on the orchestrator chatting with itself. Roundhouse keeps the orchestrator on Opus only when planning is needed, runs specialists on Sonnet when execution is needed, and skips the team entirely for trivial work — measured **7×–34× cheaper** and **2×–7× faster** than the comparable claude-on-rails v0.4 swarm across 10 representative Rails tasks.
+Rails AI-coding tools that fan out specialists for every change waste 60–80% of their cost on the orchestrator chatting with itself. Roundhouse orchestrates only when planning is needed, runs specialists on Sonnet when execution is needed, and skips the team entirely for trivial work — measured **7×–34× cheaper** and **2×–7× faster** than the comparable claude-on-rails v0.4 swarm across 10 representative Rails tasks.
 
 See [BENCHMARK.md](BENCHMARK.md) for the full evidence.
 
@@ -132,7 +132,7 @@ roundhouse/
 
 ## Architectural decisions
 
-- **Orchestrator on Opus, specialists on Sonnet.** Opus reasons about how to break the work apart; Sonnet executes the chunks. Cost-aligned to capability.
+- **Specialists pinned to Sonnet; run the orchestrator on Opus.** Opus reasons about how to break the work apart; Sonnet executes the chunks. Cost-aligned to capability. Only the pin is enforced, via `model:` in `agents/*.md`; the skill inherits your session's model, so start the session on Opus.
 - **Single `/prompt-refiner` pass at the top.** Refines the user's task once before any planning. Avoids the per-specialist refinement overhead that v0.4 incurs.
 - **Triage tiers before dispatch.** Trivial work skips specialists entirely; single-domain spawns one specialist with no auto-gates; cross-cutting runs the full TDD + gates flow.
 - **Conditional security/database gates.** Trigger only when the change actually touches input handling, raw HTML, SQL composition, file ops, mass assignment, indexes, or migrations. v0.4 runs every gate on every task; roundhouse runs them when warranted.
