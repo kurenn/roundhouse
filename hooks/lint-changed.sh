@@ -37,7 +37,7 @@ project_root="$(cd "$(dirname "$file")" 2>/dev/null && git rev-parse --show-topl
 [ -z "$project_root" ] && exit 0
 
 # Only run if the project has rubocop bundled.
-if [ ! -f "$project_root/Gemfile.lock" ] || ! grep -q "^\s*rubocop" "$project_root/Gemfile.lock" 2>/dev/null; then
+if [ ! -f "$project_root/Gemfile.lock" ] || ! grep -qE "^ *rubocop" "$project_root/Gemfile.lock" 2>/dev/null; then
   exit 0
 fi
 
