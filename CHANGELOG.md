@@ -5,6 +5,36 @@ All notable changes to roundhouse are documented here.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.1] — 2026-09-15
+
+### Fixed
+
+- **Hook output now reaches Claude.** All three PostToolUse hooks printed to
+  stdout and exited 0, which Claude Code sends to the debug log only — the TDD
+  reminder, migration-safety warnings and Rubocop findings were never seen.
+  They now emit `hookSpecificOutput.additionalContext`, and `hook_smoke.sh`
+  asserts that shape instead of "printed something". (#13)
+- **TDD reminder no longer goes silent for the rest of a branch.** Any dirty
+  spec anywhere satisfied the check; it now looks for the edited file's own
+  spec. Also covers every `.rb` under `app/` (components, serializers, queries,
+  presenters were missed). (#17)
+- **Rubocop hook was a silent no-op on macOS**, and reported files with exactly
+  10, 20, 30… offenses as clean. Portable grep; the exit code now decides. (#18)
+- **Migration `null: false` warning never fired on macOS** — same `\s`
+  portability bug. The file-wide-grep ceiling is now documented. (#19)
+- **Prompt contracts that stalled a live run.** `rails-tests` defaults to red
+  instead of asking a question it can't ask; `rails-security` stops citing a
+  skill that doesn't exist; `/prompt-refiner` degrades gracefully when the
+  companion plugin isn't installed. (#14)
+
+### Changed
+
+- **Specialists use the `sonnet` alias instead of `claude-sonnet-4-6`.** Installs
+  now run the current Sonnet. `validate.py` rejects pinned IDs. (#16)
+- **Docs no longer claim the orchestrator is pinned to Opus.** A skill inherits
+  the session's model; only the specialists' model is enforced. Opus is the
+  recommended session model. (#15)
+
 ## [1.1.0] — 2026-06-08
 
 ### Added
