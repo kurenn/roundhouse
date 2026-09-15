@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # TDD discipline reminder.
 # Fires after every Edit/Write. Filters to production code under app/ internally.
-# Prints a one-line nudge if no spec/test file has been touched in the working tree.
+# Prints a one-line nudge if the edited file's own spec/test hasn't been touched.
 # Stateless. Emits hookSpecificOutput.additionalContext so Claude actually sees it.
 
 set -u
@@ -30,7 +30,7 @@ file="$(printf '%s' "$input" | jq -r '.tool_input.file_path // empty' 2>/dev/nul
 
 # Only fire for production Ruby code under app/ (and lib/).
 case "$file" in
-  */app/models/*.rb|*/app/controllers/*.rb|*/app/services/*.rb|*/app/jobs/*.rb|*/app/mailers/*.rb|*/app/channels/*.rb|*/app/helpers/*.rb|*/lib/*.rb) ;;
+  */app/*.rb|*/lib/*.rb) ;;
   *) exit 0 ;;
 esac
 
@@ -45,9 +45,14 @@ project_root="$(cd "$(dirname "$file")" 2>/dev/null && git rev-parse --show-topl
 
 cd "$project_root" 2>/dev/null || exit 0
 
-# If a spec/test has already been touched in the working tree, no nudge needed.
-if git status --porcelain spec/ test/ 2>/dev/null | grep -qE '_spec\.rb|_test\.rb'; then
+# If this file's own spec/test has already been touched, no nudge needed. The
+# leading [ /] is the porcelain status field or a directory boundary, so
+# blog_post_spec.rb doesn't answer for post.rb.
+# ponytail: basename match, so two Post classes in different namespaces share a
+# spec signal — map app/ -> spec/ paths if that collision ever bites.
+base="$(basename "$file" .rb)"
+if git status --porcelain 2>/dev/null | grep -qE "[ /]${base}_(spec|test)\.rb$"; then
   exit 0
 fi
 
-emit "TDD reminder: production code under app/ was just edited but no spec/test file has changed in the working tree. If this task has user-visible behavior, write or update the spec before/alongside the production change."
+emit "TDD reminder: production code under app/ was just edited but ${base}_spec.rb has not changed in the working tree. If this task has user-visible behavior, write or update the spec before/alongside the production change."
