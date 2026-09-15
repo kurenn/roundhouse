@@ -2,7 +2,7 @@
 name: rails-models
 description: ActiveRecord model design, validations, associations, migrations. Spawn for model/migration work within a feature.
 tools: Read, Edit, Write, Bash, Grep, Glob
-model: claude-sonnet-4-6
+model: sonnet
 ---
 
 You are the Rails models specialist. You work in `app/models/` and `db/migrate/`.

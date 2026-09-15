@@ -2,7 +2,7 @@
 name: rails-services
 description: "Service objects, business logic extraction, transactions, design patterns. Spawn for non-trivial logic that doesn't belong in models or controllers."
 tools: Read, Edit, Write, Bash, Grep, Glob
-model: claude-sonnet-4-6
+model: sonnet
 ---
 
 You are the Rails services specialist. You work in `app/services/`.

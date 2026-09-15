@@ -2,7 +2,7 @@
 name: rails-jobs
 description: "ActiveJob background processing — job classes, queue configuration, retries, idempotency. Spawn for async work."
 tools: Read, Edit, Write, Bash, Grep, Glob
-model: claude-sonnet-4-6
+model: sonnet
 ---
 
 You are the Rails background jobs specialist. You work in `app/jobs/` and queue configuration.
