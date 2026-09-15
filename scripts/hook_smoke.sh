@@ -1,7 +1,12 @@
 #!/usr/bin/env bash
 # Hook smoke test / benchmark.
 # Pipes a representative PostToolUse JSON payload into each hook and checks
-# whether the hook emits its expected reminder.
+# that the hook delivers its reminder in a shape Claude actually receives.
+#
+# A hook that prints bare text and exits 0 is invisible: PostToolUse stdout at
+# exit 0 goes to the debug log only. Delivery therefore means valid JSON on
+# stdout carrying .hookSpecificOutput.additionalContext. Asserting "it printed
+# something" is what let the invisible-hook regression ship.
 #
 # Usage: hook_smoke.sh <hooks_dir>
 #
@@ -12,6 +17,8 @@ set -u
 
 HOOKS_DIR="${1:?usage: hook_smoke.sh <hooks_dir>}"
 HOOKS_DIR="$(cd "$HOOKS_DIR" && pwd)"
+
+command -v jq >/dev/null 2>&1 || { echo "hook_smoke: jq is required to verify hook output shape"; exit 1; }
 
 pass=0
 fail=0
@@ -47,23 +54,29 @@ RB
 
 payload() { printf '{"tool_name":"Edit","tool_input":{"file_path":"%s"}}' "$1"; }
 
+# Extract the text Claude would actually receive; empty if the hook emitted
+# anything other than a well-formed additionalContext payload.
+ctx() { printf '%s' "$1" | jq -er '.hookSpecificOutput.additionalContext' 2>/dev/null; }
+
 echo "Hooks under test: $HOOKS_DIR"
 echo
 
 # --- check-migration.sh : expect production-risk warnings ---
 out="$(payload "$sandbox/db/migrate/20260101000000_risky.rb" | bash "$HOOKS_DIR/check-migration.sh" 2>&1)"
-if echo "$out" | grep -q "Migration safety reminders:"; then
-  ok "check-migration emits warnings for a risky migration"
+got="$(ctx "$out")"
+if printf '%s' "$got" | grep -q "Migration safety reminders:"; then
+  ok "check-migration delivers warnings to Claude via additionalContext"
 else
-  bad "check-migration produced no warning (got: ${out:-<empty>})"
+  bad "check-migration did not deliver additionalContext (got: ${out:-<empty>})"
 fi
 
 # --- check-tdd.sh : expect the TDD nudge (app/ edited, no spec touched) ---
 out="$(payload "$sandbox/app/models/post.rb" | bash "$HOOKS_DIR/check-tdd.sh" 2>&1)"
-if echo "$out" | grep -q "TDD reminder:"; then
-  ok "check-tdd emits the reminder for unspecced app/ code"
+got="$(ctx "$out")"
+if printf '%s' "$got" | grep -q "TDD reminder:"; then
+  ok "check-tdd delivers the reminder to Claude via additionalContext"
 else
-  bad "check-tdd produced no reminder (got: ${out:-<empty>})"
+  bad "check-tdd did not deliver additionalContext (got: ${out:-<empty>})"
 fi
 
 # --- lint-changed.sh : no rubocop in sandbox, so it must exit cleanly/silently ---

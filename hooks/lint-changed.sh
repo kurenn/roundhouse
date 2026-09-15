@@ -5,6 +5,21 @@
 
 set -u
 
+# Deliver a message to Claude.
+# PostToolUse stdout at exit 0 goes to the debug log only — Claude never sees it.
+# hookSpecificOutput.additionalContext is the documented channel that reaches the
+# transcript. Without jq, fall back to exit 2, which shows stderr to Claude.
+emit() {
+  if command -v jq >/dev/null 2>&1; then
+    # shellcheck disable=SC2016
+    jq -nc --arg t "$1" \
+      '{hookSpecificOutput:{hookEventName:"PostToolUse",additionalContext:$t}}'
+    exit 0
+  fi
+  printf '%s\n' "$1" >&2
+  exit 2
+}
+
 # Claude Code delivers the PostToolUse payload as JSON on stdin; the edited
 # path lives at .tool_input.file_path. (There is no CLAUDE_FILE env var.)
 input="$(cat)"
@@ -37,7 +52,5 @@ if echo "$output" | grep -qE "no offenses detected|0 offenses"; then
 fi
 
 # If offenses, print a tight summary so Claude can react.
-echo "Rubocop on $file:"
-echo "$output" | head -20
-
-exit 0
+emit "Rubocop on $file:
+$(echo "$output" | head -20)"
