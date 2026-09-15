@@ -37,19 +37,20 @@ project_root="$(cd "$(dirname "$file")" 2>/dev/null && git rev-parse --show-topl
 [ -z "$project_root" ] && exit 0
 
 # Only run if the project has rubocop bundled.
-if [ ! -f "$project_root/Gemfile.lock" ] || ! grep -q "^\s*rubocop" "$project_root/Gemfile.lock" 2>/dev/null; then
+if [ ! -f "$project_root/Gemfile.lock" ] || ! grep -qE "^ *rubocop" "$project_root/Gemfile.lock" 2>/dev/null; then
   exit 0
 fi
 
 # Run rubocop on the single file. Print only error/warning lines, keep it short.
 cd "$project_root" 2>/dev/null || exit 0
 
-output="$(bundle exec rubocop --no-color --format simple "$file" 2>&1 || true)"
+output="$(bundle exec rubocop --no-color --format simple "$file" 2>&1)"
+rc=$?
 
-# If clean (no offenses), don't print anything — silence is golden.
-if echo "$output" | grep -qE "no offenses detected|0 offenses"; then
-  exit 0
-fi
+# Trust the exit code, not the English: 0 is clean, 1 is offenses, 2+ means
+# rubocop never ran (no bundle, bad config) and $output is an error, not lint.
+# The old "0 offenses" grep also read "10 offenses detected" as clean.
+[ "$rc" -eq 1 ] || exit 0
 
 # If offenses, print a tight summary so Claude can react.
 emit "Rubocop on $file:
