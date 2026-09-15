@@ -34,6 +34,10 @@ case "$file" in
   *) exit 0 ;;
 esac
 
+# These are file-wide greps, not per-statement parsing: a file with three
+# add_index calls where only one is concurrent reads as safe, and a `default:`
+# anywhere suppresses the null:false warning. Under-warns, never over-warns.
+# ponytail: file-wide grep, parse per-statement if false negatives bite.
 warnings=()
 
 if grep -q "remove_column" "$file"; then
@@ -52,7 +56,7 @@ if grep -qE "add_reference|add_belongs_to" "$file" && ! grep -q "index:" "$file"
   warnings+=("add_reference / add_belongs_to without index: true — every belongs_to needs an index")
 fi
 
-if grep -qE "null:\s*false" "$file" && ! grep -qE "default:" "$file" && grep -q "add_column" "$file"; then
+if grep -qE "null:[[:space:]]*false" "$file" && ! grep -qE "default:" "$file" && grep -q "add_column" "$file"; then
   warnings+=("add_column with null: false but no default — this fails on existing rows; add a default or backfill first")
 fi
 
