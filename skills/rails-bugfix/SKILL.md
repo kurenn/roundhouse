@@ -11,6 +11,9 @@ Iron rule: **no patches before root cause.** If a fix isn't obvious from the err
 
 Run the user's bug description through `/prompt-refiner`. Use the refined version for all subsequent steps. Do not refine again.
 
+It ships as a separate plugin (`prompt-refiner@kurenn`). If it isn't installed, restate
+the report yourself as symptom / trigger / expected-vs-actual and continue.
+
 ## Step 2: Reproduce
 
 Locate the failing test, log, or stacktrace. If the user didn't provide one, ask for:

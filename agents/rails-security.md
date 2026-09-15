@@ -25,7 +25,10 @@ Confirm:
 - New file uploads have content-type and size validation
 - New public endpoints have rate limiting if relevant
 
-State "this is a quick pass; ask for the rails-security-review skill for a full audit" in the report header.
+State "this is a quick pass over recent changes, not a full audit" in the report header.
+If the change warrants a deeper pass, say so and name what you'd want audited — this
+plugin has no full-audit skill on purpose (see DECISIONS.md D1). `/boo-security` or
+`/rails-audit` cover it if the user has those companion plugins installed.
 
 ## Output contract
 
