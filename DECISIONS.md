@@ -23,7 +23,7 @@ asymmetric, and a contributor may be tempted to add `/rails-database` and
 
 **Why.** Database and security review are *gates*, not authoring modes. They are
 meaningful only when there is a concrete change to review — the orchestrator
-fires them at the right moment (Step 7 of `/rails-feature`), after specialists
+fires them at the right moment (Step 6 of `/rails-feature`), after specialists
 have produced a diff. A user dropping into `/rails-security` in an isolated
 session would be reviewing nothing. The clean mental model is **"seven
 specialists you direct + two gates the workflow triggers,"** and table symmetry

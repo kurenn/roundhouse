@@ -7,14 +7,7 @@ description: "Diagnose and fix a Rails bug with root-cause discipline. No patche
 
 Iron rule: **no patches before root cause.** If a fix isn't obvious from the error message in 30 seconds, investigate before editing.
 
-## Step 1: Refine the report (mandatory, ONCE per invocation)
-
-Run the user's bug description through `/prompt-refiner`. Use the refined version for all subsequent steps. Do not refine again.
-
-It ships as a separate plugin (`prompt-refiner@kurenn`). If it isn't installed, restate
-the report yourself as symptom / trigger / expected-vs-actual and continue.
-
-## Step 2: Reproduce
+## Step 1: Reproduce
 
 Locate the failing test, log, or stacktrace. If the user didn't provide one, ask for:
 - The exact command that fails OR
@@ -23,29 +16,29 @@ Locate the failing test, log, or stacktrace. If the user didn't provide one, ask
 
 Do not start editing without a reproduction. A bug you can't reproduce is a bug you can't verify fixed.
 
-## Step 3: Trace
+## Step 2: Trace
 
 Read the failure point. Then read the upstream callers. Then read the relevant test (if any). Look at recent commits in the affected area (`git log -p -- <file>`).
 
-## Step 4: Hypothesize
+## Step 3: Hypothesize
 
 State the suspected root cause in ONE sentence. Be specific: "Y is nil because X#initialize doesn't set it when called from controller#create" — not "there's a nil somewhere."
 
-## Step 5: Verify
+## Step 4: Verify
 
 Confirm the hypothesis with a targeted read or quick test before editing. Print the value, run the failing case in a console, add a temporary `puts` if necessary. Confirm the cause matches the symptom.
 
-## Step 6: Fix
+## Step 5: Fix
 
 Smallest patch that addresses the root cause. NO surrounding cleanup, NO refactoring, NO renaming. The bugfix commit should diff-stat to ~5 lines unless the root cause genuinely requires more.
 
-## Step 7: Test
+## Step 6: Test
 
 - Run the EXACT failing test that reproduced the bug. Confirm it passes.
 - Run the entire spec file. Confirm no regression.
 - If the bug shipped without test coverage (which is why it shipped), add the missing regression test that fails before your fix and passes after. Spawn `rails-tests` with `phase: red` for this if helpful.
 
-## Step 8: Synthesize
+## Step 7: Synthesize
 
 One paragraph: what was broken, why, what changed, what test now covers it. If you discovered a related issue but didn't fix it, name it explicitly as a follow-up.
 

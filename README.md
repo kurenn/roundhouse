@@ -1,6 +1,6 @@
 # Roundhouse
 
-A Claude Code plugin that simulates a Rails development team. Specialists pinned to Sonnet, Opus recommended for the orchestrating session, prompt-refiner once per task, TDD by default for cross-cutting work, conditional security/database gates.
+A Claude Code plugin that simulates a Rails development team. Specialists pinned to Sonnet, Opus recommended for the orchestrating session, TDD by default for cross-cutting work, conditional security/database gates.
 
 The orchestrator triages each task into one of three tiers (trivial / single-domain / cross-cutting) and dispatches only the specialists actually needed. Trivial work bypasses the team entirely; cross-cutting work runs tests-first and applies gates only when the change touches their concerns.
 
@@ -89,7 +89,7 @@ For any feature work where you want triage + dispatch:
 /rails-feature add a Post.recent scope returning posts from the last 7 days, ordered newest first
 ```
 
-The orchestrator runs the prompt through `/prompt-refiner` once, classifies the task into a tier, plans (cross-cutting only), runs TDD red→green for behavioral work, dispatches Sonnet specialists in parallel where possible, and applies conditional gates.
+The orchestrator classifies the task into a tier, plans (cross-cutting only), runs TDD red→green for behavioral work, dispatches Sonnet specialists in parallel where possible, and applies conditional gates.
 
 ### Specialist mode — when you know the scope
 
@@ -133,7 +133,6 @@ roundhouse/
 ## Architectural decisions
 
 - **Specialists pinned to Sonnet; run the orchestrator on Opus.** Opus reasons about how to break the work apart; Sonnet executes the chunks. Cost-aligned to capability. Only the pin is enforced, via `model:` in `agents/*.md`; the skill inherits your session's model, so start the session on Opus.
-- **Single `/prompt-refiner` pass at the top.** Refines the user's task once before any planning. Avoids the per-specialist refinement overhead that v0.4 incurs.
 - **Triage tiers before dispatch.** Trivial work skips specialists entirely; single-domain spawns one specialist with no auto-gates; cross-cutting runs the full TDD + gates flow.
 - **Conditional security/database gates.** Trigger only when the change actually touches input handling, raw HTML, SQL composition, file ops, mass assignment, indexes, or migrations. v0.4 runs every gate on every task; roundhouse runs them when warranted.
 - **Slim subagent prompts** (~50 lines) with **lazy-loaded reference docs**. Every specialist loads cheaply; tutorial depth is read on demand only.
@@ -158,7 +157,7 @@ Roundhouse pairs naturally with three other plugins in the [kurenn marketplace](
 
 | Plugin | What it adds | Best invoked |
 |---|---|---|
-| **`prompt-refiner@kurenn`** | One-shot task refinement — translates casual asks into structured specs | Roundhouse already calls `/prompt-refiner` once per task. Install it so the call resolves. |
+| **`prompt-refiner@kurenn`** | One-shot task refinement — translates casual asks into structured specs | Neither `/rails-feature` nor `/rails-bugfix` calls it. Invoke it yourself on a casual request before handing the refined version to either. |
 | **`boorails@kurenn`** | 7 deep Rails skills: `/boo-security`, `/boo-quality`, `/boo-safety`, `/boo-diagnose`, `/boo-framework`, `/boo-alternatives`, `/boo-dx` | Use after roundhouse ships a feature, for deeper audit/critique cycles |
 | **`rails-audit@kurenn`** | Full Rails project stability audit across 18 dimensions, severity-ranked report | Use periodically (pre-launch, quarterly) to catch drift roundhouse won't see during feature work |
 
